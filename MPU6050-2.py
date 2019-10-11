@@ -52,7 +52,7 @@ def acquire(ndt):
     print('Writing valid file...')
 
     DFrame = pd.DataFrame(data    =   data.T,
-                          columns = ['ax'],
+                          columns = ['az'],
                           index   =   t  )
 
     with gz.open(dirname+filename,'wt') as file:
