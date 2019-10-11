@@ -7,10 +7,12 @@ import datetime
 import gzip as gz
 import numpy as np
 import pandas as pd
-#import RPi.GPIO as gpio
+import RPi.GPIO as gpio
 
 #===============================================================================
 #===============================================================================
+#addr = 0x68 
+
 
 def read_data(MPU, addr):
     high = bus.read_byte_data(MPU, addr  )
@@ -37,16 +39,16 @@ def acquire(ndt):
     for i in range(ndt):
 
         t[i]      = time.time() - t0
-
-        data[0,i] = read_data(0x3b)
-        data[1,i] = read_data(0x3d)
-        data[2,i] = read_data(0x3f)
-
-        data[3,i] = read_data(0x43)
-        data[4,i] = read_data(0x45)
-        data[5,i] = read_data(0x47)
+        #Acelerômetro
+        data[0,i] = read_data(MPU, 0x3b)
+        data[1,i] = read_data(MPU, 0x3d)
+        data[2,i] = read_data(MPU, 0x3f)
+        #Giroscópio
+        data[3,i] = read_data(MPU, 0x43)
+        data[4,i] = read_data(MPU, 0x45)
+        data[5,i] = read_data(MPU, 0x47)
     
-    print('... done! ({0}s, {1}Hz)'.format(int(Td), int(fs)))
+   # print('... done! ({0}s, {1}Hz)'.format(int(Td), int(fs)))
 
     print('Writing valid file...')
 
@@ -73,8 +75,8 @@ bus.write_byte_data(MPU, 0x6b, 0)
 
 #===============================================================================
 
-ndt     = 32768
-dirname = '/home/pi/Desktop/StartUp/'
+ndt     = 10
+dirname = '/home/pi/Desktop/FinalProject/'
 t, data = acquire(ndt)
 
 #===============================================================================
