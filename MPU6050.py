@@ -11,7 +11,6 @@ import RPi.GPIO as gpio
 
 #===============================================================================
 #===============================================================================
-#addr = 0x68 
 
 
 def read_data(MPU, addr):
@@ -40,9 +39,9 @@ def acquire(ndt):
 
         t[i]      = time.time() - t0
         #Acelerômetro
-        data[0,i] = read_data(MPU, 0x3b)
-        data[1,i] = read_data(MPU, 0x3d)
-        data[2,i] = read_data(MPU, 0x3f)
+        data[0,i] = read_data(MPU, 0x3b)/16384
+        data[1,i] = read_data(MPU, 0x3d)/16384
+        data[2,i] = read_data(MPU, 0x3f)/16384
         #Giroscópio
         data[3,i] = read_data(MPU, 0x43)
         data[4,i] = read_data(MPU, 0x45)
@@ -75,7 +74,7 @@ bus.write_byte_data(MPU, 0x6b, 0)
 
 #===============================================================================
 
-ndt     = 10
+ndt     = 30000
 dirname = '/home/pi/Desktop/FinalProject/'
 t, data = acquire(ndt)
 
