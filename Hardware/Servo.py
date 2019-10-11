@@ -12,29 +12,33 @@ pi = pigpio.pi() # Connect to local Pi.
 pi.set_mode(4, pigpio.OUTPUT)
 
 # Set servo limits
-left=600
-right=2500
+left=550
+right=2325
 middle=(left+right)/2
 
 # Initial position - Middle
 pi.set_servo_pulsewidth(4, middle)
-time.sleep(2)
+time.sleep(1)
+
+
+
+
 
 ### Harmonic Excitation
-n = 0     #Number of cycles
+n = 10     #Number of cycles
 t = .1     #Sleep time
-
-
+A = 800
+d = 0
 for i in range (n):
-    pi.set_servo_pulsewidth(4, left)
+    pi.set_servo_pulsewidth(4, middle-A+d*i)
     time.sleep(t)
-    pi.set_servo_pulsewidth(4, right)
+    pi.set_servo_pulsewidth(4, middle+A-d*i)
     time.sleep(2*t)
     pi.set_servo_pulsewidth(4, middle)
     time.sleep(t)
 
 ### Working with increments
-n = 10
+n = 0
 step = 100
 A = int((right-middle)/step)
 t = .1
