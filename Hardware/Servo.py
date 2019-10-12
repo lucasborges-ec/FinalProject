@@ -25,7 +25,7 @@ time.sleep(1)
 
 
 ### Harmonic Excitation
-n = 10     #Number of cycles
+n = 15     #Number of cycles
 t = .1     #Sleep time
 A = 800
 d = 0
