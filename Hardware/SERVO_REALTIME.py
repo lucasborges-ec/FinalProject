@@ -15,8 +15,11 @@ ACCEL_ZOUT0 = 0x3F
 import smbus
 import time
 import pigpio
+import timeit
+import numpy as np
 #===============================================================================
 #===============================================================================
+
 def read_data(MPU, addr):
     high = bus.read_byte_data(MPU, addr  )
     low  = bus.read_byte_data(MPU, addr+1)
@@ -29,14 +32,28 @@ def read_data(MPU, addr):
         return val
     
 #===============================================================================
-def servo(ndt, t):
+def servo(ndt, t, A, df):
     for i in range (ndt):
         a = read_data(MPU, 0x3F)/8192
-        if a>.6:
-            s = ((right-left)*a+4*(right+left))/8
-            cs= ((right-left)*a-4*(right+left))/-8
+        if a>df:
+            s = (((middle+A)-(middle-A))*a+4*((middle+A)+(middle-A)))/8
+            cs= (((middle+A)-(middle-A))*a-4*((middle+A)+(middle-A)))/-8
             pi.set_servo_pulsewidth(4, cs)
             time.sleep(t)
+            
+def harmonic (nc, f):
+    Tm= 1/f
+    n = int(Tm/0.001)
+    t = np.linspace(0,Tm,n)
+    a = np.sin(2*np.pi*f*t)
+#    start=np.zeros(n)
+#    end=np.zeros(n)
+    for i in range (nc):
+        for i in range (n):
+            a = 4*np.sin(2*np.pi*f*t[i])
+            s = (((middle+A)-(middle-A))*a+4*((middle+A)+(middle-A)))/8
+            pi.set_servo_pulsewidth(4, s)
+
 #===============================================================================
 #===============================================================================
 #===============================================================================
@@ -57,25 +74,30 @@ pi = pigpio.pi() # Connect to local Pi.
 pi.set_mode(4, pigpio.OUTPUT)
 
 # Set servo limits
-left=1100
-right=1800
+left=500
+right=2400
 middle=(left+right)/2
 
 # Initial position - Middle
 pi.set_servo_pulsewidth(4, middle)
 time.sleep(1.5)
 
+#===============================================================================
+ndt = 0000   # Number of cycles
+t = 0.0       # Delay
+A = 500       # Range
+df = 0.3      # Down filter
 
+servo (ndt, t, A, df)
 
 #===============================================================================
-t = 0.0
-ndt     = 20000
-#t, data = acquire(ndt)
-servo (ndt, t)
+nc = 0
+f = 5
+harmonic (nc, f)
+
+
 #===============================================================================
 
 pi.set_servo_pulsewidth(4, 0) # stop servo pulses
-
 pi.set_PWM_dutycycle(4, 0) # stop PWM
-
 pi.stop() # terminate connection and release resources
