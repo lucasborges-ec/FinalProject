@@ -25,9 +25,9 @@ time.sleep(1)
 
 
 ### Harmonic Excitation
-n = 15     #Number of cycles
+n = 25     #Number of cycles
 t = .1     #Sleep time
-A = 800
+A = 500
 d = 0
 for i in range (n):
     pi.set_servo_pulsewidth(4, middle-A+d*i)
