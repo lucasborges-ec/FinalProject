@@ -71,6 +71,8 @@ MPU = 0x68
 
 # Now wake up the 6050 up as it starts in sleep mode
 bus.write_byte_data(MPU, 0x6b, 0)
+# Changing the scale
+bus.write_byte_data(MPU, 0x1C, 0x08)
 
 #===============================================================================
 
