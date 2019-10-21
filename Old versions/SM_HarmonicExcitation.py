@@ -12,7 +12,7 @@ ControlPin=[7,11,13,15]
 
 #Initial Parameters
 
-A = 10 ## Amplitude [steps]
+A = 5 ## Amplitude [steps]
 #f = 10  ## Excitation Frequency [Hz]
 
 
