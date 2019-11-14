@@ -1,3 +1,4 @@
+
 ''' NOTES 
 ACCEL_RANGE_2G = 0x00
 ACCEL_RANGE_4G = 0x08
@@ -69,7 +70,7 @@ def servo_leitura(ndt, t, A, df):
 def servo_teste(t_total, t_max, A, lim_inf, z, fn):
 #Decremento Logarítmico    
     n=435
-    w=2*np.pi*fn
+    w*np.pi*fn
     x = np.linspace(0,t_max,int(n*t_max))
     dec = np.e**-(z*w*x)
 
@@ -96,37 +97,7 @@ def servo_teste(t_total, t_max, A, lim_inf, z, fn):
                 #print (dec[i])
             t2=time.time()
             print (t2-t1)
-
-
-
-def servo_teste2(t_total, t_max, A, lim_inf, z, fn):
-#Decremento Logarítmico    
-    n=435
-    w=2*np.pi*fn
-    x = np.linspace(0,t_max,int(n*t_max))
-    dec = np.exp(-(z*w*x))
-
-#Leitura do Sensor
-    t0=time.time()
-    dif=0
     
-    while dif<t_total:
-        for i in range (int(n*t_max)):
-            
-            #print (A_aux)
-            a = read_data(MPU, 0x3d)/8192
-            if a<-lim_inf:
-                A_aux = A*dec[i]
-                s = (middle-A_aux)
-                pi.set_servo_pulsewidth(4, s)
-            elif a>lim_inf:
-                A_aux = A*dec[i]
-                s = (middle+A_aux)
-                pi.set_servo_pulsewidth(4, s)
-            else:
-                pi.set_servo_pulsewidth(4, middle)
-
-
 def servo(ndt, t, A, df):
 
 #Leitura do Sensor
@@ -189,12 +160,12 @@ df =0.5      # Down filter
 #servo(ndt,t,A,df)
 
 t_total=50
-t_max=3
+t_max=2.5
 A=800
-lim_inf=.2
+lim_inf=.3
 z=0.15
 fn = 3.78
-servo_teste2(t_total, t_max, A, lim_inf, z, fn)
+servo_teste(t_total, t_max, A, lim_inf, z, fn)
 
 #===============================================================================
 A=300

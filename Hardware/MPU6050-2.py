@@ -41,7 +41,7 @@ def acquire(ndt):
         #Acelerômetro
  #       data[i] = read_data(MPU, 0x3b)
 #        data[1,i] = read_data(MPU, 0x3d)
-        data[i] = read_data(MPU, 0x3f)
+        data[i] = read_data(MPU, 0x3d)
         #Giroscópio
 #        data[3,i] = read_data(MPU, 0x43)
 #        data[4,i] = read_data(MPU, 0x45)
@@ -76,7 +76,7 @@ bus.write_byte_data(MPU, 0x1C, 0x08)
 
 #===============================================================================
 
-ndt     = 20000
+ndt     = 10000
 dirname = '/home/pi/Desktop/FinalProject/'
 t, data = acquire(ndt)
 

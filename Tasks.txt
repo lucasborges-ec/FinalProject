@@ -1,0 +1,15 @@
+MODELO
+ - Pegar modelo
+ - Pesar as peças do modelo
+ - Calcular prop dinâmicas
+
+EXCITAÇÃO HARMÔNICA
+ - Prop do servo (velocidade)
+ - Implementar controle no código
+ - Excitação na forma senoidal
+
+ATENUADOR
+ - Implementar defasagem na resposta
+
+CÓDIGO
+ - Visualização em tempo real da aceleração
