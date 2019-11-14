@@ -65,8 +65,8 @@ def servo_leitura(ndt, t, A, df):
               
     print('... done!')
 
-
-def servo_teste(t_total, t_max, A, lim_inf, z, fn):
+##############SEGUNDA TENTATIVA##############
+def servo2(t_total, t_max, A, lim_inf, z, fn):
 #Decremento Logarítmico    
     n=435
     w=2*np.pi*fn
@@ -87,7 +87,7 @@ def servo_teste(t_total, t_max, A, lim_inf, z, fn):
                 A_aux = A*dec[i]
                 #print ("Amplitude:",A_aux)
                 
-                a = 1.7*read_data(MPU, 0x3d)/8192
+                a = read_data(MPU, 0x3d)/8192
                 s = (((middle+A_aux)-(middle-A_aux))*a+4*((middle+A_aux)+(middle-A_aux)))/8
                 pi.set_servo_pulsewidth(4, s)
                 print (a)
@@ -98,8 +98,8 @@ def servo_teste(t_total, t_max, A, lim_inf, z, fn):
             print (t2-t1)
 
 
-
-def servo_teste2(t_total, t_max, A, lim_inf, z, fn):
+##############TERCEIRA TENTATIVA############## 
+def servo3(t_total, t_max, A, lim_inf, z, fn):
 #Decremento Logarítmico    
     n=435
     w=2*np.pi*fn
@@ -111,45 +111,83 @@ def servo_teste2(t_total, t_max, A, lim_inf, z, fn):
     dif=0
     
     while dif<t_total:
-        for i in range (int(n*t_max)):
-            
-            #print (A_aux)
-            a = read_data(MPU, 0x3d)/8192
-            if a<-lim_inf:
-                A_aux = A*dec[i]
-                s = (middle-A_aux)
-                pi.set_servo_pulsewidth(4, s)
-            elif a>lim_inf:
-                A_aux = A*dec[i]
-                s = (middle+A_aux)
-                pi.set_servo_pulsewidth(4, s)
-            else:
-                pi.set_servo_pulsewidth(4, middle)
+        a = read_data(MPU, 0x3d)/8192
+        if abs(a)>lim_inf:
+            for i in range (int(n*t_max)):
+                
+                a = read_data(MPU, 0x3d)/8192
+                if a<-lim_inf:
+                    A_aux = A*dec[i]
+                    s = (middle-A_aux)
+                    pi.set_servo_pulsewidth(4, s)
+                    print (A_aux)
+                elif a>lim_inf:
+                    A_aux = A*dec[i]
+                    s = (middle+A_aux)
+                    pi.set_servo_pulsewidth(4, s)
+                    print (A_aux)
+                else:
+                    pi.set_servo_pulsewidth(4, middle)
+        dif=time.time()-t0
 
 
-def servo(ndt, t, A, df):
+
+
+
+
+##############QUARTA TENTATIVA############## 
+def servo4(t_total, t_max, A, lim_inf, z, fn):
+#Decremento Logarítmico    
+    n=435
+    w=2*np.pi*fn
+    x = np.linspace(0,t_max,int(n*t_max))
+    dec = np.exp(-(z*w*x))
 
 #Leitura do Sensor
+    t0=time.time()
+    dif=0
+    
+    while dif<t_total:
+        a = read_data(MPU, 0x3d)/8192
+        if abs(a)>lim_inf:
+                        
+            for i in range (int(n*t_max)):
+            
+                a1=read_data(MPU, 0x3d)/8192
+                a2=read_data(MPU, 0x3d)/8192
+            
+            
+                a = read_data(MPU, 0x3d)/8192
+                if a1<a2:
+                    A_aux = A*dec[i]
+                    s = (middle-A_aux)
+                    pi.set_servo_pulsewidth(4, s)
+                    print (A_aux)
+                elif a1>a2:
+                    A_aux = A*dec[i]
+                    s = (middle+A_aux)
+                    pi.set_servo_pulsewidth(4, s)
+                    print (A_aux)
+                else:
+                    pi.set_servo_pulsewidth(4, middle)
+        dif=time.time()-t0
+
+
+
+
+#############PRIMEIRA TENTATIVA##############
+def servo1(ndt, t, A, df):
+
     for i in range (ndt):
         a =read_data(MPU, 0x3d)/8192
         if abs(a)>df:
             s = (((middle+A)-(middle-A))*a+4*((middle+A)+(middle-A)))/8
             cs= (((middle+A)-(middle-A))*a-4*((middle+A)+(middle-A)))/-8
             pi.set_servo_pulsewidth(4, s)
+        else:
+            pi.set_servo_pulsewidth(4, middle)
 
 
-def harmonic (nc, f,A):
-    Tm= 1/f
-    n = int(Tm/0.001)
-    t = np.linspace(0,Tm,n)
-    a = np.sin(2*np.pi*f*t)
-#    start=np.zeros(n)
-#    end=np.zeros(n)
-    for i in range (nc):
-        for i in range (n):
-            a = 2*np.sin(2*np.pi*f*t[i])
-            s = (((middle+A)-(middle-A))*a+2*((middle+A)+(middle-A)))/4
-            pi.set_servo_pulsewidth(4, s)
 
 #===============================================================================
 #===============================================================================
@@ -181,26 +219,20 @@ time.sleep(2)
 #===============================================================================
 ndt =25000   # Number of cycles
 t = 0.0       # Delay
-A = 800       # Range
-df =0.5      # Down filter
+A = 900       # Range
+df =.5      # Down filter
 #F=2000
 #dirname = '/home/pi/Desktop/FinalProject/'
 #servo_leitura (ndt, t, A, df)
-#servo(ndt,t,A,df)
+servo1(ndt,t,A,df)
 
 t_total=50
-t_max=3
+t_max=2
 A=800
 lim_inf=.2
-z=0.15
-fn = 3.78
-servo_teste2(t_total, t_max, A, lim_inf, z, fn)
-
-#===============================================================================
-A=300
-nc =00
-f = 2.5
-#harmonic (nc, f, A)
+z=0.12
+fn = 10
+#servo1(t_total, t_max, A, lim_inf, z, fn)
 
 #===============================================================================
 pi.set_servo_pulsewidth(4, 0) # stop servo pulses
